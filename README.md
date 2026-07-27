@@ -1,5 +1,7 @@
 # NaviWriter
 
+**A free, offline-first browser writing app and Scrivener alternative for novels, worldbuilding, and long-form manuscripts.**
+
 **NaviWriter** is an offline-first writing workspace for drafting, organizing, outlining, reviewing, and exporting long-form writing projects.
 
 It was built as a browser-based writing tool inspired by apps like Scrivener and Reedsy, but designed to run locally on the web. It is especially useful for novels, serialized fiction, research-heavy projects, worldbuilding, and large writing projects with many connected documents.
