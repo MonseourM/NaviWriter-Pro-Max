@@ -1,0 +1,265 @@
+/* naviwriter/css/editor.css */
+.editor-page {
+  width: min(840px, 100%);
+  min-height: 980px;
+  padding: 72px 76px;
+  background: var(--page);
+  color: var(--page-text);
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-radius: 18px;
+  box-shadow: 0 18px 60px var(--shadow);
+  outline: none;
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.editor-page:focus {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+}
+
+.editor-page p {
+  margin: 0 0 1em;
+}
+
+.editor-page h1,
+.editor-page h2,
+.editor-page h3 {
+  line-height: 1.2;
+  margin: 1.2em 0 0.55em;
+}
+
+.editor-page h1 {
+  font-size: 2.1em;
+}
+
+.editor-page h2 {
+  font-size: 1.55em;
+}
+
+.editor-page h3 {
+  font-size: 1.25em;
+}
+
+.editor-page blockquote {
+  margin: 1em 0;
+  padding: 0.6em 1em;
+  border-left: 4px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: color-mix(in srgb, var(--page-text) 88%, var(--muted));
+  border-radius: 10px;
+}
+
+.editor-page ul,
+.editor-page ol {
+  padding-left: 1.4em;
+  margin: 0 0 1em;
+}
+
+.editor-page li {
+  margin: 0.25em 0;
+}
+
+.editor-page a {
+  color: var(--accent);
+}
+
+.editor-page hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 1.6em 0;
+}
+
+.editor-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+.editor-page th,
+.editor-page td {
+  border: 1px solid var(--line);
+  padding: 8px;
+}
+
+.editor-page img {
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+.editor-page::selection,
+.editor-page *::selection {
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+body.focus-mode .editor-page {
+  width: min(900px, 100%);
+  min-height: calc(100vh - 190px);
+}
+
+@media print {
+  html,
+  body {
+    background: white;
+    color: black;
+    overflow: visible;
+  }
+
+  .topbar,
+  .sidebar,
+  .toolbar,
+  .statusbar {
+    display: none !important;
+  }
+
+  .app,
+  .main-layout,
+  .workspace,
+  .page-wrap {
+    display: block;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    background: white;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .doc-title {
+    display: none;
+  }
+
+  .editor-page {
+    width: auto;
+    min-height: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: white;
+    color: black;
+  }
+}
+
+@media (max-width: 700px) {
+  .page-wrap {
+    padding: 10px;
+  }
+
+  .editor-page {
+    min-height: 720px;
+    padding: 34px 24px;
+    border-radius: 14px;
+  }
+
+  .doc-title {
+    font-size: 22px;
+  }
+}
+.editor-page span[style*="font-size"] {
+  line-height: inherit;
+}
+
+.editor-page font {
+  line-height: inherit;
+}
+
+.editor-page [style*="background-color"] {
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.editor-page div[style*="text-align: center"],
+.editor-page p[style*="text-align: center"] {
+  text-align: center;
+}
+
+.editor-page div[style*="text-align: right"],
+.editor-page p[style*="text-align: right"] {
+  text-align: right;
+}
+/* === Stage 3: tables and images === */
+
+.editor-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  table-layout: fixed;
+}
+
+.editor-page th,
+.editor-page td {
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  min-width: 48px;
+  vertical-align: top;
+}
+
+.editor-page td:focus,
+.editor-page th:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  outline-offset: -2px;
+}
+
+.editor-page tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--page) 92%, var(--panel2));
+}
+
+.editor-page .image-block {
+  display: block;
+  width: min(520px, 100%);
+  max-width: 100%;
+  margin: 1.2em auto;
+  resize: both;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--page) 88%, var(--panel2));
+  padding: 8px;
+}
+
+.editor-page .image-block img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+}
+
+.editor-page .image-block figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.9em;
+  text-align: center;
+  outline: none;
+}
+
+.editor-page .image-block figcaption:empty::before {
+  content: "Add caption...";
+  color: color-mix(in srgb, var(--muted) 65%, transparent);
+}
+
+.editor-page .image-block:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.editor-page p {
+  text-indent: 0;
+}
+
+.editor-page {
+  max-width: 760px;
+}
+.editor-page {
+  background: #ffffff;
+  color: #111827;
+}
+/* === Wider writing paper === */
+
+.editor-page {
+  width: min(920px, 100%);
+  max-width: 920px;
+}
+
+body.focus-mode .editor-page {
+  width: min(980px, 100%);
+  max-width: 980px;
+}

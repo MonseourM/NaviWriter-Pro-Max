@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>NaviWriter</title>
+
+
+  
+  <!-- Styles -->
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/editor.css">
+</head>
+
+<body class="theme-purple">
+  <main class="app">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="brand">
+        <strong>NaviWriter</strong>
+        <span>Offline Writing Suite</span>
+      </div>
+      
+<div class="top-actions top-actions-clean">
+  <details class="top-menu">
+    <summary>New</summary>
+
+    <div class="top-menu-panel">
+      <button id="newDocBtn" type="button">New Document</button>
+      <button id="newManuscriptBtn" type="button">New Manuscript</button>
+      <button id="newSubDocBtn" type="button">Subdoc</button>
+    </div>
+  </details>
+
+  <details class="top-menu">
+    <summary>Workspace</summary>
+
+    <div class="top-menu-panel">
+      <button id="openOutlinerBtn" type="button">Outliner</button>
+      <button id="openSplitEditorBtn" type="button">Split</button>
+      <button id="openCollectionsBtn" type="button">Collections</button>
+    </div>
+  </details>
+
+  <details class="top-menu">
+    <summary>Document</summary>
+
+    <div class="top-menu-panel">
+      <button id="duplicateDocBtn" type="button">Duplicate</button>
+      <button id="renameDocBtn" type="button">Rename</button>
+      <button id="deleteDocBtn" type="button" class="danger">Delete</button>
+    </div>
+  </details>
+
+  <details class="top-menu">
+    <summary>Insert</summary>
+
+    <div class="top-menu-panel">
+      <button id="insertImageBtn" type="button" title="Insert Image">
+        Insert Image
+      </button>
+
+      <button id="importPdfBtn" type="button">
+        Import PDF
+      </button>
+    </div>
+  </details>
+
+  <button id="compileExportBtn" class="topbar-primary-action" type="button">
+    File
+  </button>
+
+  <span class="topbar-action-divider"></span>
+  
+<details class="top-menu layout-mode-menu">
+  <summary>View</summary>
+
+  <div class="top-menu-panel">
+    <button type="button" data-layout-choice="auto">
+      Auto
+    </button>
+
+    <button type="button" data-layout-choice="desktop">
+      Desktop
+    </button>
+
+    <button type="button" data-layout-choice="compact">
+      Compact
+    </button>
+
+    <button type="button" data-layout-choice="mobile">
+      Mobile
+    </button>
+  </div>
+</details>
+  <button id="lightModeBtn" type="button">Light</button>
+  <button id="focusBtn" type="button">Focus</button>
+</div>
+    
+    </header>
+
+    <!-- Main Layout -->
+    <section class="main-layout">
+      
+      <div class="responsive-drawer-actions">
+  <button id="openSidebarDrawerBtn" type="button">
+    Docs
+  </button>
+
+  <button id="openInspectorDrawerBtn" type="button">
+    Inspector
+  </button>
+</div>
+
+<div id="responsiveOverlay" class="responsive-overlay hidden"></div>
+
+      <!-- Sidebar -->
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-head">
+  <strong>Documents</strong>
+
+  <div class="sidebar-head-actions">
+    <span id="docCount">0 docs</span>
+
+    <button
+      id="closeSidebarDrawerBtn"
+      class="drawer-close-btn"
+      type="button"
+    >
+      ×
+    </button>
+  </div>
+</div>
+
+        <input
+          id="docSearch"
+          class="doc-search"
+          type="search"
+          placeholder="Search docs, tags, status..."
+        />
+
+        <div id="documentList" class="document-list">
+          <div class="empty-note">No documents yet.</div>
+        </div>
+      </aside>
+
+       <div id="leftResize" class="resize-gutter"></div>
+
+      <!-- Editor Area -->
+      <section class="workspace">
+        <button id="exitFocusBtn" class="exit-focus-btn">Exit Focus</button>
+
+        <!-- Toolbar -->
+        <nav id="toolbar" class="toolbar">
+  <select id="paragraphSelect" title="Paragraph style">
+    <option value="p">Paragraph</option>
+    <option value="h1">Heading 1</option>
+    <option value="h2">Heading 2</option>
+    <option value="h3">Heading 3</option>
+    <option value="blockquote">Quote</option>
+  </select>
+
+  <select id="fontSelect" title="Font">
+  <option value="Arial">Arial</option>
+  <option value="Helvetica">Helvetica</option>
+  <option value="Verdana">Verdana</option>
+  <option value="Trebuchet MS">Trebuchet MS</option>
+  <option value="Tahoma">Tahoma</option>
+
+  <option value="Georgia">Georgia</option>
+  <option value="Times New Roman">Times New Roman</option>
+  <option value="Garamond">Garamond</option>
+  <option value="Palatino Linotype">Palatino</option>
+  <option value="Book Antiqua">Book Antiqua</option>
+
+  <option value="Courier New">Courier New</option>
+  <option value="Lucida Console">Lucida Console</option>
+  <option value="Consolas">Consolas</option>
+  <option value="Monaco">Monaco</option>
+
+  <option value="system-ui">System UI</option>
+  <option value="serif">Serif</option>
+  <option value="sans-serif">Sans Serif</option>
+  <option value="monospace">Monospace</option>
+</select>
+
+  <select id="fontSizeSelect" title="Font size">
+    <option value="">Size</option>
+    <option value="1">Small</option>
+    <option value="3">Normal</option>
+    <option value="5">Large</option>
+    <option value="7">Huge</option>
+  </select>
+
+  <span class="toolbar-divider"></span>
+
+  <button data-command="bold" title="Bold"><b>B</b></button>
+  <button data-command="italic" title="Italic"><i>I</i></button>
+  <button data-command="underline" title="Underline"><u>U</u></button>
+  <button data-command="strikeThrough" title="Strikethrough"><s>S</s></button>
+
+  <span class="toolbar-divider"></span>
+
+  <label class="color-tool" title="Text color">
+    Text
+    <input id="textColorPicker" type="color" value="#f4f5f7" />
+  </label>
+
+  <label class="color-tool" title="Highlight color">
+    Highlight
+    <input id="highlightColorPicker" type="color" value="#8b5cf6" />
+  </label>
+
+  <span class="toolbar-divider"></span>
+
+  <button data-command="insertUnorderedList" title="Bulleted list">• List</button>
+  <button data-command="insertOrderedList" title="Numbered list">1. List</button>
+
+  <button data-command="justifyLeft" title="Align left">Left</button>
+  <button data-command="justifyCenter" title="Align center">Center</button>
+  <button data-command="justifyRight" title="Align right">Right</button>
+
+  <button data-command="indent" title="Indent">Indent</button>
+  <button data-command="outdent" title="Outdent">Outdent</button>
+
+  <span class="toolbar-divider"></span>
+
+  <button id="quoteBtn" title="Block quote">Quote</button>
+  <button id="hrBtn" title="Horizontal rule">HR</button>
+  <button id="clearFormatBtn" title="Clear formatting">Clear</button>
+  <span class="toolbar-divider"></span>
+
+<button id="insertTableBtn" title="Insert table">Table</button>
+<button id="addRowBtn" title="Add row below">+ Row</button>
+<button id="deleteRowBtn" title="Delete row">− Row</button>
+<button id="addColBtn" title="Add column right">+ Col</button>
+<button id="deleteColBtn" title="Delete column">− Col</button>
+
+<label class="color-tool" title="Cell background">
+  Cell
+  <input id="cellBgPicker" type="color" value="#1e2430" />
+</label>
+
+<label class="color-tool" title="Cell text color">
+  Cell Text
+  <input id="cellTextPicker" type="color" value="#f4f5f7" />
+</label>
+
+<span class="toolbar-divider"></span>
+
+
+  <button data-command="undo" title="Undo">Undo</button>
+  <button data-command="redo" title="Redo">Redo</button>
+</nav>
+
+
+<div id="boardModeBar" class="board-mode-bar">
+  <div class="board-toolbar-primary">
+    <button id="writeModeBtn">Write</button>
+    <button id="boardModeBtn">Board</button>
+<button id="sourcesModeBtn">Sources</button>
+    <span class="board-toolbar-divider"></span>
+
+    <button id="addBoardNoteBtn">+ Note</button>
+    <button id="addBoardImageBtn">+ Image</button>
+    <button id="addBoardLinkBtn">+ Link</button>
+    <button id="addBoardPersonBtn">+ Person</button>
+
+    <span class="board-toolbar-divider"></span>
+
+    <button id="connectBoardItemsBtn">Connect</button>
+  </div>
+
+  <div class="board-toolbar-secondary">
+    <details class="board-more-menu">
+      <summary>More</summary>
+
+      <div class="board-more-panel">
+        <button id="familyConnectorBtn">Family Link</button>
+        <button id="colorBoardItemBtn">Color</button>
+        <button id="decreaseBoardFontBtn">Font −</button>
+<button id="increaseBoardFontBtn">Font +</button>
+<button id="resetBoardFontBtn">Reset Font</button>
+        <button id="duplicateBoardItemBtn">Duplicate</button>
+        <button id="bringBoardItemFrontBtn">Bring to Front</button>
+        <button id="sendBoardItemBackBtn">Send to Back</button>
+        <button id="undoBoardBtn">Undo</button>
+        <button id="redoBoardBtn">Redo</button>
+        <button id="exportBoardBtn">Export Board</button>
+        <button id="resetBoardZoomBtn">Reset Zoom</button>
+        <button id="showBoardMinimapBtn" type="button">Minimap</button>
+      </div>
+    </details>
+
+    <div class="board-zoom-controls">
+      <button id="zoomOutBoardBtn">−</button>
+      <span id="boardZoomLabel">100%</span>
+      <button id="zoomInBoardBtn">+</button>
+    </div>
+  </div>
+</div>
+        
+        <section id="sourcesPanel" class="sources-panel hidden">
+  <div class="sources-panel-head">
+    <div>
+      <strong>Research Sources</strong>
+      <div class="sources-panel-subtitle">
+        Track links, references, notes, and source material for this research document.
+      </div>
+    </div>
+
+    <button id="addSourceBtn">+ Source</button>
+  </div>
+
+  <div id="sourcesList" class="sources-list">
+    <div class="empty-note">
+      No sources yet.
+    </div>
+  </div>
+</section>
+
+<div id="boardSurface" class="board-surface hidden"></div>
+        
+        <div id="boardMinimap" class="board-minimap hidden">
+  <div class="board-minimap-head">
+    <span>Map</span>
+    <button id="toggleBoardMinimapBtn" type="button">×</button>
+  </div>
+
+  <div id="boardMinimapBody" class="board-minimap-body">
+    <div id="boardMinimapWorld" class="board-minimap-world"></div>
+    <div id="boardMinimapViewport" class="board-minimap-viewport"></div>
+  </div>
+</div>
+        <!-- Document Title -->
+        <input
+          id="docTitle"
+          class="doc-title"
+          type="text"
+          placeholder="Untitled Document"
+        />
+
+        <!-- Editable Page -->
+
+      
+        
+        <div class="page-wrap">
+          <article
+            id="editor"
+            class="editor-page"
+            contenteditable="true"
+            spellcheck="true"
+          >
+            <p></p>
+          </article>
+        </div>
+        
+        
+<div
+  id="splitResizeHandle"
+  class="split-resize-handle hidden"
+  title="Resize split pane"
+></div>
+<aside id="splitPane" class="split-pane hidden">
+  <div class="split-pane-head">
+    <div>
+      <strong>Split Reference</strong>
+      <div id="splitDocMeta" class="split-doc-meta">
+        Choose a document to view beside your current draft.
+      </div>
+    </div>
+
+    <button id="closeSplitEditorBtn">×</button>
+  </div>
+
+  <div class="split-pane-controls">
+    <label class="field-label">
+      Document
+      <select id="splitDocSelect">
+        <option value="">Choose document...</option>
+      </select>
+    </label>
+    
+    <button id="renameSplitPaneDocBtn" type="button">
+  Rename
+</button>
+    
+<button id="editSplitPaneBtn" type="button">
+  Edit
+</button>
+
+<button id="saveSplitPaneBtn" type="button" class="hidden">
+  Save Split
+</button>
+    
+    <button id="openSplitDocAsMainBtn">Open as Main</button>
+    
+  </div>
+
+  <div id="splitDocContent" class="split-doc-content">
+    <div class="empty-note">
+      Select a document to preview it here.
+    </div>
+  </div>
+</aside>
+
+      </section>
+      <div id="rightResize" class="resize-gutter"></div>
+<aside id="inspector" class="inspector">
+  <div class="inspector-head inspector-head-tabs">
+  <div class="inspector-title-row">
+    <strong>Inspector</strong>
+
+<div class="inspector-title-actions">
+  <button id="toggleInspectorSectionsBtn" class="inspector-collapse-all-btn">
+    Collapse All
+  </button>
+
+  <button
+    id="closeInspectorDrawerBtn"
+    class="drawer-close-btn"
+    type="button"
+  >
+    ×
+  </button>
+</div>
+  </div>
+
+  <div class="inspector-tabs" role="tablist" aria-label="Inspector sections">
+    <button
+      type="button"
+      class="inspector-tab-btn active"
+      data-inspector-tab-btn="details"
+      role="tab"
+      aria-selected="true"
+    >
+      Details
+    </button>
+
+    <button
+      type="button"
+      class="inspector-tab-btn"
+      data-inspector-tab-btn="review"
+      role="tab"
+      aria-selected="false"
+    >
+      Review
+    </button>
+
+    <button
+      type="button"
+      class="inspector-tab-btn"
+      data-inspector-tab-btn="analysis"
+      role="tab"
+      aria-selected="false"
+    >
+      Analysis
+    </button>
+  </div>
+</div>
+
+  <section class="inspector-section" data-inspector-tab="analysis">
+  <div class="section-title">Find / Replace</div>
+
+    <input id="findInput" type="search" placeholder="Find text..." />
+    <input id="replaceInput" type="text" placeholder="Replace with..." />
+
+    <div class="mini-grid">
+      <button id="findNextBtn">Find</button>
+      <button id="replaceBtn">Replace</button>
+      <button id="replaceAllBtn">Replace All</button>
+    </div>
+  </section>
+
+  <section class="inspector-section" data-inspector-tab="analysis">
+  <div class="section-title">Outline</div>
+    <div id="documentMapPanel" class="document-map-panel">
+  <div class="document-map-head">
+  <span class="document-map-card-label">Document Map</span>
+  <button id="refreshDocumentMapBtn" type="button">↻</button>
+</div>
+
+  <div id="documentMapList" class="document-map-list">
+    <div class="empty-note">No headings yet.</div>
+  </div>
+</div>
+  </section>
+<section class="inspector-section long-goal-section" data-inspector-tab="analysis">
+  <div class="section-title">Deadline Goal</div>
+
+  <label class="field-label">
+    Target words
+    <input id="longGoalWordsInput" type="number" min="0" placeholder="100000" />
+  </label>
+
+  <label class="field-label">
+    Target date
+    <input id="longGoalDateInput" type="date" />
+  </label>
+
+  <button id="saveLongGoalBtn">Save Long Goal</button>
+
+  <div id="longGoalOutput" class="goal-progress">No long goal set.</div>
+  <div id="dailyGoalOutput" class="goal-progress">
+  No daily goal data yet.
+</div>
+
+<div class="goal-bar">
+  <div id="dailyGoalBarFill" class="goal-bar-fill"></div>
+</div>
+</section>
+  <section class="inspector-section goal-section" data-inspector-tab="analysis">
+  <div class="section-title">Temporary Goal</div>
+
+    <div class="goal-row">
+      <input id="goalInput" type="number" min="0" placeholder="Word goal" />
+      <button id="saveGoalBtn">Set</button>
+    </div>
+
+    <div id="goalProgress" class="goal-progress">No goal set.</div>
+
+    <div class="goal-bar">
+      <div id="goalBarFill" class="goal-bar-fill"></div>
+    </div>
+  </section>
+
+ <section class="inspector-section" data-inspector-tab="analysis">
+  <div class="section-title">Stats</div>
+
+    <div class="stat-line">
+      <span>Words</span>
+      <strong id="statWords">0</strong>
+    </div>
+
+    <div class="stat-line">
+      <span>Characters</span>
+      <strong id="statChars">0</strong>
+    </div>
+
+    <div class="stat-line">
+      <span>Paragraphs</span>
+      <strong id="statParagraphs">0</strong>
+    </div>
+
+    <div class="stat-line">
+      <span>Headings</span>
+      <strong id="statHeadings">0</strong>
+    </div>
+
+    <div class="stat-line">
+      <span>Reading time</span>
+      <strong id="statReadingTime">0 min</strong>
+    </div>
+
+    <div class="stat-line">
+      <span>Session words</span>
+      <strong id="statSessionWords">0</strong>
+    </div>
+  </section>
+
+
+
+<section class="inspector-section" data-inspector-tab="analysis">
+  <div class="section-title">Repeated Words</div>
+<label class="field-label">
+  <select id="analysisScopeSelect">
+    <option value="current">Current document</option>
+    <option value="project">Current project</option>
+  </select>
+</label>
+  <div class="subsection-title">Most Used Words</div>
+  <div id="topWordsList" class="analysis-list">
+    <div class="empty-note">No words yet.</div>
+  </div>
+
+  <div class="subsection-title">Most Used Phrases</div>
+  <div id="topPhrasesList" class="analysis-list">
+    <div class="empty-note">No phrases yet.</div>
+  </div>
+</section>
+
+<section class="inspector-section" data-inspector-tab="analysis">
+  <div class="section-title">Section Counts</div>
+  <div id="headingCountsList" class="analysis-list">
+    <div class="empty-note">No headings yet.</div>
+  </div>
+</section>
+
+<section class="inspector-section inspector-review-section" data-inspector-tab="review">
+  <div class="section-title">Review</div>
+
+  <div class="relationship-section">
+    <div class="relationship-header">
+      <h3>Relationships</h3>
+
+      <div class="relationship-header-actions relationship-actions-clean">
+  <button
+    id="createRelationshipBtn"
+    type="button"
+    class="relationship-primary-action"
+  >
+    + Create Link
+  </button>
+
+  <details class="relationship-more-menu">
+    <summary type="button">
+      ⋯
+    </summary>
+
+    <div class="relationship-more-panel">
+      <button id="openRelationshipDashboardBtn" type="button">
+        Dashboard
+      </button>
+
+      <button id="openLocalGraphBtn" type="button">
+        Local Graph
+      </button>
+    </div>
+  </details>
+</div>
+      
+    </div>
+
+    <div id="relationshipPanel">
+      <div class="relationship-subsection">
+        <h5>Outgoing</h5>
+
+        <div id="relationshipOutgoing">
+          <div class="empty-note">No relationships.</div>
+        </div>
+      </div>
+
+      <div class="relationship-subsection">
+        <h5>Referenced By</h5>
+
+        <div id="relationshipBacklinks">
+          <div class="empty-note">No references.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="inline-comments-panel">
+    <div class="inline-comments-head">
+      <strong>Comments</strong>
+
+      <div class="inline-comments-actions comments-actions-clean">
+  <button
+    id="addInlineCommentBtn"
+    type="button"
+    class="comments-primary-action"
+  >
+    + Comment
+  </button>
+
+  <details class="comments-more-menu">
+    <summary type="button">
+      ⋯
+    </summary>
+
+    <div class="comments-more-panel">
+      <button id="openCommentsDrawerBtn" type="button">
+        Current Doc
+      </button>
+
+      <button id="openProjectCommentsBtn" type="button">
+        Project
+      </button>
+    </div>
+  </details>
+</div>
+      
+    </div>
+
+    <div id="inlineCommentsSummary" class="inline-comments-summary">
+      <div class="empty-note">No comments yet.</div>
+    </div>
+  </div>
+</section>
+
+  <section class="inspector-section document-details-section" data-inspector-tab="details">
+  <div class="section-title">Document Details</div>
+
+  <label class="field-label">
+    Folder
+    <input
+      id="folderInput"
+      type="text"
+      placeholder="Drafts, Notes, Book 1..."
+    />
+  </label>
+
+  <label class="field-label">
+    Status
+    <select id="docStatusSelect">
+      <option value="">None</option>
+      <option value="Idea">Idea</option>
+      <option value="Drafting">Drafting</option>
+      <option value="Needs Rewrite">Needs Rewrite</option>
+      <option value="Revising">Revising</option>
+      <option value="Final">Final</option>
+      <option value="Reference">Reference</option>
+    </select>
+  </label>
+    
+    
+
+  <label class="field-label">
+    POV
+    <input
+      id="docPovInput"
+      type="text"
+      placeholder="Noah, Quinoa, narrator..."
+    />
+  </label>
+
+  <label class="field-label">
+    Location
+    <input
+      id="docLocationInput"
+      type="text"
+      placeholder="Village Center, Clocktower, Orchard..."
+    />
+  </label>
+
+  <label class="field-label">
+    Timeline
+    <input
+      id="docTimelineInput"
+      type="text"
+      placeholder="Winter 2007, Day 3, Act II..."
+    />
+  </label>
+
+  <label class="field-label">
+    Characters
+    <textarea
+      id="docCharactersInput"
+      rows="2"
+      placeholder="Noah, Silas, Evelyn..."
+    ></textarea>
+  </label>
+
+  <label class="field-label">
+    Tags
+    <input
+      id="tagsInput"
+      type="text"
+      placeholder="comma, separated, tags"
+    />
+  </label>
+    
+    <div class="custom-metadata-values-panel">
+  <div class="custom-metadata-values-head">
+    <strong>Custom Metadata</strong>
+
+    <button id="manageCustomMetadataFieldsInlineBtn" type="button">
+      Fields
+    </button>
+  </div>
+
+  <div id="customMetadataValuesList" class="custom-metadata-values-list">
+    <div class="empty-note">No custom fields yet.</div>
+  </div>
+</div>
+
+  <label class="field-label">
+    Summary
+    <textarea
+      id="docSummaryInput"
+      rows="4"
+      placeholder="Brief scene/chapter summary..."
+    ></textarea>
+  </label>
+
+  <div class="details-actions">
+  <button id="saveMetaBtn">Save Details</button>
+  <button id="applyStatusToSubdocsBtn">Apply Status to Subdocs</button>
+</div>
+</section>
+
+  <section class="inspector-section" data-inspector-tab="review">
+  <div class="section-title">Recent</div>
+    <div id="recentDocsList" class="recent-docs-list">
+      <div class="empty-note">No recent documents.</div>
+    </div>
+  </section>
+</aside>
+
+    </section>
+
+    <!-- Status Bar -->
+    <footer class="statusbar">
+  <div class="status-left">
+    <span id="saveStatus">Ready</span>
+    <span id="engineStatus" class="engine-status">Engine: loading...</span>
+  </div>
+
+  <div class="status-center">
+    <span id="wordCount">0 words</span>
+    <span>•</span>
+    <span id="charCount">0 characters</span>
+  </div>
+
+  <div class="status-right">
+    <span id="projectFileStatus" class="project-file-status footer-project-status">
+      Project file: not linked
+    </span>
+
+    <span class="status-dot">•</span>
+
+    <label for="themeSelect">Theme</label>
+
+    <select id="themeSelect">
+      <option value="purple">Purple</option>
+      <option value="midnight">Midnight</option>
+      <option value="forest">Forest</option>
+      <option value="rose">Rose</option>
+    </select>
+  </div>
+</footer>
+    
+    
+<div id="findPanel" class="floating-panel hidden">
+  <div class="floating-panel-head">
+    <strong>Find / Replace</strong>
+    <button id="closeFindPanelBtn">×</button>
+  </div>
+
+  <div class="floating-panel-body">
+    <label class="field-label">
+      Find
+      <input id="floatingFindInput" type="search" placeholder="Find word or phrase..." />
+    </label>
+    <label class="field-label">
+  Scope
+  <select id="floatingFindScopeSelect">
+    <option value="current">Current document</option>
+    <option value="project">Current project</option>
+  </select>
+</label>
+
+    <label class="field-label">
+      Replace with
+      <input id="floatingReplaceInput" type="text" placeholder="Replacement text..." />
+    </label>
+
+    <div class="floating-actions">
+      <button id="floatingFindBtn">Find</button>
+      <button id="floatingReplaceSelectedBtn">Replace Selected</button>
+      <button id="floatingReplaceAllBtn">Replace All</button>
+    </div>
+
+    <div id="findResultsSummary" class="find-summary">
+      No search yet.
+    </div>
+
+    <div id="findResultsList" class="find-results-list"></div>
+  </div>
+</div>
+    
+    <div id="snapshotModal" class="modal-backdrop hidden">
+      
+  <div class="subdoc-modal snapshot-modal">
+    <div class="subdoc-modal-head">
+      <strong>Document Snapshots</strong>
+      <button id="closeSnapshotModalBtn">×</button>
+      
+    </div>
+      
+    <div id="snapshotList" class="snapshot-list">
+      <div class="snapshot-note">
+Snapshots are saved locally. Export project backups for safe long-term keeping.
+</div>
+      <div class="empty-note">No snapshots yet.</div>
+    </div>
+  </div>
+</div>
+    
+    <div id="outlinerModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal outliner-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>Manuscript Outliner</strong>
+        <div class="modal-subtitle">
+          View documents, metadata, status, and structure in one place.
+        </div>
+      </div>
+
+      <button id="closeOutlinerModalBtn">×</button>
+    </div>
+
+    <div class="outliner-toolbar">
+  <label class="field-label outliner-field">
+    Scope
+    <select id="outlinerScopeSelect">
+      <option value="project">Current Project</option>
+      <option value="folder">Current Folder</option>
+      <option value="all">All Documents</option>
+    </select>
+  </label>
+      
+      <label class="field-label outliner-field">
+  View
+  <select id="outlinerViewSelect">
+    <option value="table">Table</option>
+    <option value="relationships">Relationships</option>
+  </select>
+</label>
+      
+  <details class="outliner-relationship-source-menu">
+  <summary type="button">
+    Link Sources
+  </summary>
+
+  <div class="outliner-relationship-toggles">
+    <label>
+      <input
+        id="outlinerShowExplicitRelationships"
+        type="checkbox"
+        checked
+      />
+      Explicit
+    </label>
+
+    <label>
+      <input
+        id="outlinerShowCollectionRelationships"
+        type="checkbox"
+      />
+      Collections
+    </label>
+
+    <label>
+      <input
+        id="outlinerShowFolderRelationships"
+        type="checkbox"
+      />
+      Folders
+    </label>
+
+    <label>
+      <input
+        id="outlinerShowSourceRelationships"
+        type="checkbox"
+      />
+      Sources
+    </label>
+
+    <label>
+      <input
+        id="outlinerShowTagRelationships"
+        type="checkbox"
+      />
+      Tags
+    </label>
+  </div>
+</details>
+
+  <label class="field-label outliner-field">
+    Status
+    <select id="outlinerStatusFilterSelect">
+      <option value="">All Statuses</option>
+      <option value="__none">None</option>
+      <option value="Idea">Idea</option>
+      <option value="Drafting">Drafting</option>
+      <option value="Needs Rewrite">Needs Rewrite</option>
+      <option value="Revising">Revising</option>
+      <option value="Final">Final</option>
+      <option value="Reference">Reference</option>
+    </select>
+  </label>
+
+  <label class="field-label outliner-field">
+    Type
+    <select id="outlinerTypeFilterSelect">
+      <option value="">All Types</option>
+      <option value="manuscript">Manuscript</option>
+      <option value="chapter">Chapter</option>
+      <option value="front-matter">Front Matter</option>
+      <option value="body-matter">Body Matter</option>
+      <option value="back-matter">Back Matter</option>
+      <option value="cover">Cover</option>
+      <option value="notes">Notes</option>
+      <option value="research">Research</option>
+      <option value="pdf">PDF</option>
+      <option value="general">General</option>
+    </select>
+  </label>
+
+  <label class="field-label outliner-field">
+    Folder
+    <select id="outlinerFolderFilterSelect">
+      <option value="">All Folders</option>
+    </select>
+  </label>
+
+  <label class="field-label outliner-field">
+    Sort
+    <select id="outlinerSortSelect">
+      <option value="structure">Structure</option>
+      <option value="title-asc">Title A-Z</option>
+      <option value="title-desc">Title Z-A</option>
+      <option value="words-desc">Words High-Low</option>
+      <option value="words-asc">Words Low-High</option>
+      <option value="status">Status</option>
+      <option value="updated-desc">Updated Newest</option>
+      <option value="updated-asc">Updated Oldest</option>
+    </select>
+  </label>
+
+  <label class="field-label outliner-field outliner-search-field">
+    Search
+    <input
+      id="outlinerSearchInput"
+      type="text"
+      placeholder="Search title, POV, location, characters..."
+    />
+  </label>
+
+  <button id="refreshOutlinerBtn" class="outliner-refresh-btn">Refresh</button>
+      
+      <button id="manageOutlinerCustomColumnsBtn" type="button">
+  Custom Columns
+</button>
+      
+</div>
+
+    <div class="outliner-table-wrap">
+      <table class="outliner-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Words</th>
+            <th>POV</th>
+            <th>Location</th>
+            <th>Folder</th>
+<th>Collections</th>
+<th>Updated</th>
+          </tr>
+        </thead>
+
+        <tbody id="outlinerTableBody">
+          <tr>
+            <td colspan="9">No documents loaded.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+    <!-- Hidden Import Input -->
+    
+    <div id="projectCommentsPanel" class="floating-panel hidden">
+  <div
+  id="projectCommentsPanelHead"
+  class="floating-panel-head"
+>
+    <div>
+      <strong>Project Comments</strong>
+      <div id="projectCommentsSummary" class="modal-subtitle">
+        No comments yet.
+      </div>
+    </div>
+
+    <button id="closeProjectCommentsBtn">
+      ×
+    </button>
+  </div>
+
+  <div id="projectCommentsList" class="floating-panel-body">
+    <div class="empty-note">
+      No comments found.
+    </div>
+  </div>
+</div>
+    
+    <div id="commentsDrawer" class="comments-drawer hidden">
+  <div id="commentsDrawerHead" class="comments-drawer-head">
+    <div>
+      <strong>Comments</strong>
+      <div id="commentsDrawerSubtitle" class="modal-subtitle">
+        Inline document notes.
+      </div>
+    </div>
+
+    <div class="comments-drawer-actions">
+      <button id="toggleResolvedCommentsBtn" type="button">
+        Show Resolved
+      </button>
+
+      <button id="closeCommentsDrawerBtn" type="button">
+        ×
+      </button>
+    </div>
+  </div>
+
+  <div id="commentsDrawerList" class="comments-drawer-list">
+    <div class="empty-note">No comments yet.</div>
+  </div>
+</div>
+    
+    <div id="outlinerCustomColumnsModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal outliner-custom-columns-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>Outliner Custom Columns</strong>
+        <div class="modal-subtitle">
+          Choose which custom metadata fields appear in the Outliner.
+        </div>
+      </div>
+
+      <button id="closeOutlinerCustomColumnsBtn" type="button">×</button>
+    </div>
+
+    <div id="outlinerCustomColumnsList" class="outliner-custom-columns-list">
+      <div class="empty-note">No custom fields yet.</div>
+    </div>
+  </div>
+</div>
+    
+    <div id="customMetadataFieldsModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal custom-metadata-fields-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>Custom Metadata Fields</strong>
+        <div class="modal-subtitle">
+          Create reusable fields for your documents.
+        </div>
+      </div>
+
+      <button id="closeCustomMetadataFieldsModalBtn" type="button">×</button>
+    </div>
+
+    <div class="custom-metadata-field-form">
+      <label>
+        <span>Field name</span>
+        <input
+          id="customMetadataFieldNameInput"
+          type="text"
+          placeholder="Scene Purpose, Canon Level, Arc Status..."
+        />
+      </label>
+
+      <label>
+        <span>Type</span>
+        <select id="customMetadataFieldTypeSelect">
+          <option value="text">Text</option>
+          <option value="longText">Long Text</option>
+          <option value="dropdown">Dropdown</option>
+          <option value="checkbox">Checkbox</option>
+          <option value="number">Number</option>
+          <option value="date">Date</option>
+        </select>
+      </label>
+
+      <label id="customMetadataOptionsWrap" class="custom-metadata-options-wrap hidden">
+        <span>Dropdown options</span>
+        <textarea
+          id="customMetadataFieldOptionsInput"
+          placeholder="One option per line&#10;Draft&#10;Canon&#10;Needs Review"
+        ></textarea>
+      </label>
+
+      <button id="addCustomMetadataFieldBtn" type="button" class="primary-action">
+        Add Field
+      </button>
+    </div>
+
+    <div class="custom-metadata-fields-list-wrap">
+      <div class="custom-metadata-fields-list-head">
+        <span>Fields</span>
+        <small id="customMetadataFieldsCount">0 fields</small>
+      </div>
+
+      <div id="customMetadataFieldsList" class="custom-metadata-fields-list">
+        <div class="empty-note">No custom fields yet.</div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <div id="relationshipDashboardModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal relationship-dashboard-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>Relationship Dashboard</strong>
+        <div id="relationshipDashboardSubtitle" class="modal-subtitle">
+          Project relationship overview.
+        </div>
+      </div>
+
+      <button id="closeRelationshipDashboardBtn" type="button">×</button>
+    </div>
+
+    <div class="relationship-dashboard-toolbar">
+      <button id="refreshRelationshipDashboardBtn" type="button">
+        Refresh
+      </button>
+
+      <button id="openOutlinerFromDashboardBtn" type="button">
+        Open Outliner
+      </button>
+      
+      <button id="openGlobalGraphBtn" type="button">
+  Global Graph
+</button>
+    </div>
+
+    <div id="relationshipDashboardBody" class="relationship-dashboard-body">
+      <div class="empty-note">Loading relationship dashboard...</div>
+    </div>
+  </div>
+</div>
+    
+    <div id="localGraphModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal local-graph-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong id="localGraphTitle">Local Graph</strong>
+        <div id="localGraphSubtitle" class="modal-subtitle">
+          Current document and immediate relationships.
+        </div>
+      </div>
+
+      <button id="closeLocalGraphModalBtn" type="button">×</button>
+    </div>
+
+    <div class="local-graph-toolbar">
+      <button id="localGraphZoomOutBtn" type="button">−</button>
+      <span id="localGraphZoomLabel">100%</span>
+      <button id="localGraphZoomInBtn" type="button">+</button>
+      <button id="localGraphResetBtn" type="button">Reset Layout</button>
+      <div class="local-graph-filter-group">
+  <label>
+    <input
+      id="localGraphShowExplicit"
+      type="checkbox"
+      checked
+    />
+    Explicit
+  </label>
+
+  <label>
+    <input
+      id="localGraphShowCollections"
+      type="checkbox"
+    />
+    Collections
+  </label>
+
+  <label>
+    <input
+      id="localGraphShowFolders"
+      type="checkbox"
+    />
+    Folders
+  </label>
+
+  <label>
+    <input
+      id="localGraphShowSources"
+      type="checkbox"
+    />
+    Sources
+  </label>
+
+  <label>
+    <input
+      id="localGraphShowTags"
+      type="checkbox"
+    />
+    Tags
+  </label>
+</div>
+    </div>
+
+    <div id="localGraphSurface" class="local-graph-surface">
+
+  <div id="localGraphViewport" class="local-graph-viewport">
+    <svg
+      id="localGraphEdges"
+      class="local-graph-edges"
+      viewBox="0 0 2000 1400"
+      aria-hidden="true"
+    ></svg>
+
+    <div id="localGraphNodes" class="local-graph-nodes"></div>
+  </div>
+
+  <aside id="localGraphDetailsPanel" class="local-graph-details-panel hidden">
+    <div class="local-graph-details-head">
+      <div>
+        <strong id="localGraphDetailsTitle">Selected Node</strong>
+
+        <div id="localGraphDetailsMeta" class="modal-subtitle">
+          Choose a graph node.
+        </div>
+      </div>
+
+      <button id="closeLocalGraphDetailsBtn" type="button">×</button>
+    </div>
+
+    <div id="localGraphDetailsBody" class="local-graph-details-body">
+      <div class="empty-note">Select a node to inspect it.</div>
+    </div>
+
+    <div class="local-graph-details-actions">
+      <button id="centerLocalGraphNodeBtn" type="button">
+        Center
+      </button>
+
+      <button id="openLocalGraphNodeBtn" type="button" class="primary-action">
+        Open
+      </button>
+    </div>
+  </aside>
+
+  <div id="localGraphMinimap" class="local-graph-minimap">
+    <div class="local-graph-minimap-head">
+      <span>Map</span>
+
+      <button id="toggleLocalGraphMinimapBtn" type="button">×</button>
+    </div>
+
+    <div id="localGraphMinimapBody" class="local-graph-minimap-body">
+      <div id="localGraphMinimapWorld" class="local-graph-minimap-world"></div>
+      <div id="localGraphMinimapViewport" class="local-graph-minimap-viewport"></div>
+    </div>
+  </div>
+
+</div>
+  </div>
+</div>
+    
+    
+    <div id="relationshipModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal relationship-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>Create Relationship</strong>
+        <div class="modal-subtitle">
+          Link this document to another entity in your project.
+        </div>
+      </div>
+
+      <button id="closeRelationshipModalBtn">×</button>
+    </div>
+    
+    <div id="relationshipTypesModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal relationship-types-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>Relationship Types</strong>
+        <div class="modal-subtitle">
+          Add custom relationship labels for this project.
+        </div>
+      </div>
+
+      <button id="closeRelationshipTypesModalBtn">×</button>
+    </div>
+
+    <div class="relationship-types-modal-body">
+      <div id="relationshipTypesList" class="relationship-types-list">
+        <div class="empty-note">No custom types yet.</div>
+      </div>
+
+      <div class="relationship-type-add-row">
+        <label class="field-label">
+          New type
+          <input
+            id="relationshipTypeNameInput"
+            type="text"
+            placeholder="e.g. reveals secret, mirrors, resolves arc..."
+          />
+        </label>
+
+        <button id="addRelationshipTypeBtn" class="primary-action">
+          Add Type
+        </button>
+      </div>
+
+      <div class="modal-actions">
+        <button id="cancelRelationshipTypesModalBtn">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="relationship-modal-body">
+      <label class="field-label">
+        Target Type
+        <select id="relationshipTargetTypeSelect">
+          <option value="document">Document</option>
+          <option value="collection">Collection</option>
+          <option value="folder">Folder</option>
+          <option value="source">Source</option>
+        </select>
+      </label>
+
+      <label class="field-label">
+        Target
+        <select id="relationshipTargetSelect">
+          <option value="">Choose target...</option>
+        </select>
+      </label>
+
+      <label class="field-label">
+  Relationship
+  <select id="relationshipTypeSelect">
+    <option value="related">related</option>
+  </select>
+</label>
+
+<button
+  id="manageRelationshipTypesBtn"
+  type="button"
+  class="relationship-manage-types-btn"
+>
+  Manage Relationship Types
+</button>
+
+      <label class="field-label">
+        Strength
+        <select id="relationshipStrengthSelect">
+          <option value="1">1 — Weak</option>
+          <option value="2">2 — Light</option>
+          <option value="3" selected>3 — Normal</option>
+          <option value="4">4 — Strong</option>
+          <option value="5">5 — Critical</option>
+        </select>
+      </label>
+
+      <label class="field-label">
+        Note
+        <textarea
+          id="relationshipNoteInput"
+          rows="4"
+          placeholder="Optional note about why these are connected..."
+        ></textarea>
+      </label>
+
+      <div class="modal-actions">
+        <button id="cancelRelationshipModalBtn">Cancel</button>
+        <button id="submitRelationshipModalBtn" class="primary-action">
+          Create Link
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <div id="collectionDocPickerModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal collection-picker-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>Add Documents to Collection</strong>
+        <div id="collectionPickerSubtitle" class="modal-subtitle">
+          Select documents to add.
+        </div>
+      </div>
+
+      <button id="closeCollectionDocPickerBtn">×</button>
+    </div>
+
+    <div class="collection-picker-toolbar">
+      <label class="field-label">
+        Search
+        <input
+          id="collectionDocPickerSearch"
+          type="text"
+          placeholder="Search title, folder, tags, POV..."
+        />
+      </label>
+
+      <label class="field-label">
+        Type
+        <select id="collectionDocPickerTypeFilter">
+          <option value="">All Types</option>
+          <option value="manuscript">Manuscript</option>
+          <option value="chapter">Chapter</option>
+          <option value="front-matter">Front Matter</option>
+          <option value="body-matter">Body Matter</option>
+          <option value="back-matter">Back Matter</option>
+          <option value="cover">Cover</option>
+          <option value="notes">Notes</option>
+          <option value="research">Research</option>
+          <option value="pdf">PDF</option>
+          <option value="general">General</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="collectionDocPickerList" class="collection-picker-list">
+      <div class="empty-note">No documents loaded.</div>
+    </div>
+
+    <div class="modal-actions collection-picker-actions">
+      <button id="cancelCollectionDocPickerBtn">Cancel</button>
+      <button id="submitCollectionDocPickerBtn" class="primary-action">
+        Add Selected
+      </button>
+    </div>
+  </div>
+</div>
+    
+    <div id="collectionsModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal collections-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>Collections</strong>
+        <div class="modal-subtitle">
+          Save custom groups of documents for rewrites, research bundles, arcs, or export planning.
+        </div>
+      </div>
+
+      <button id="closeCollectionsModalBtn">×</button>
+    </div>
+
+    <div class="collections-toolbar">
+  <button id="newCollectionBtn" class="primary-action">+ Collection</button>
+  <button id="addDocsToCollectionBtn">Add Documents</button>
+  <button id="addCurrentDocToCollectionBtn">Add Current Doc</button>
+</div>
+
+    <div class="collections-layout">
+      <aside id="collectionsList" class="collections-list">
+        <div class="empty-note">No collections yet.</div>
+      </aside>
+
+      <section class="collection-detail-panel">
+        <div class="collection-detail-head">
+          <div>
+            <strong id="collectionDetailTitle">Choose a collection</strong>
+            <div id="collectionDetailMeta" class="modal-subtitle">
+              Create or select a collection to view its documents.
+            </div>
+          </div>
+
+          <div class="collection-detail-actions">
+            <button id="renameCollectionBtn">Rename</button>
+            <button id="deleteCollectionBtn">Delete</button>
+          </div>
+        </div>
+
+        <div id="collectionDocsList" class="collection-docs-list">
+          <div class="empty-note">No collection selected.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+    
+    <div id="sourceModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal source-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong id="sourceModalTitle">Add Source</strong>
+        <div class="modal-subtitle">
+          Save a research source for this document.
+        </div>
+      </div>
+
+      <button id="closeSourceModalBtn">×</button>
+    </div>
+
+    <div class="source-modal-body">
+      <label class="field-label">
+        Title
+        <input id="sourceTitleInput" type="text" placeholder="Article, book, video, page..." />
+      </label>
+
+      <label class="field-label">
+        URL
+        <input id="sourceUrlInput" type="url" placeholder="https://" />
+      </label>
+
+      <div class="source-modal-grid">
+        <label class="field-label">
+          Author / Site
+          <input id="sourceAuthorInput" type="text" placeholder="Author, website, publisher..." />
+        </label>
+
+        <label class="field-label">
+          Date accessed
+          <input id="sourceDateInput" type="date" />
+        </label>
+      </div>
+
+      <label class="field-label">
+        Tags
+        <input id="sourceTagsInput" type="text" placeholder="comma, separated, tags" />
+      </label>
+
+      <label class="field-label">
+        Notes
+        <textarea id="sourceNotesInput" rows="5" placeholder="Why this source matters, useful quotes, reminders..."></textarea>
+      </label>
+
+      <div class="modal-actions">
+        <button id="cancelSourceModalBtn">Cancel</button>
+        <button id="submitSourceModalBtn" class="primary-action">Save Source</button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <div id="compileModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal compile-modal">
+    <div class="subdoc-modal-head">
+      <strong>File</strong>
+      <button id="closeCompileModalBtn">×</button>
+    </div>
+
+    <div class="compile-body">
+
+      <section class="compile-section compile-section-featured">
+        <div class="compile-label">Export</div>
+
+        <div class="compile-grid-two">
+          <label class="compile-option">
+            <input type="radio" name="compileScope" value="current" checked />
+            <span>Current document</span>
+          </label>
+
+          <label class="compile-option">
+            <input type="radio" name="compileScope" value="project" />
+            <span>Current project / manuscript</span>
+          </label>
+        </div>
+
+        <div class="compile-grid-two">
+          <label class="compile-option">
+            <input id="compileIncludeTitles" type="checkbox" checked />
+            <span>Document titles</span>
+          </label>
+
+          <label class="compile-option">
+            <input id="compilePageBreaks" type="checkbox" checked />
+            <span>Page breaks</span>
+          </label>
+          
+          
+          <label class="compile-option">
+  <input id="compileIncludeCover" type="checkbox" checked />
+  <span>Cover</span>
+</label>
+          
+          <label class="compile-option">
+  <input id="compileIncludeFrontMatter" type="checkbox" checked />
+  <span>Front matter</span>
+</label>
+          
+          <label class="compile-option">
+  <input id="compileIncludeBodyMatter" type="checkbox" checked />
+  <span>Body / chapters</span>
+</label>
+
+
+<label class="compile-option">
+  <input id="compileIncludeBackMatter" type="checkbox" checked />
+  <span>Back matter</span>
+</label>
+
+          <label class="compile-option">
+            <input id="compileIncludeNotes" type="checkbox" unchecked />
+            <span>Notes</span>
+          </label>
+
+          <label class="compile-option">
+            <input id="compileIncludeResearch" type="checkbox" unchecked />
+            <span>Research</span>
+          </label>
+
+          <label class="compile-option">
+            <input id="compileIncludePdf" type="checkbox" unchecked />
+            <span>PDF docs</span>
+          </label>
+        </div>
+
+        <label class="field-label">
+          Format
+          <select id="compileFormatSelect">
+            <option value="html">HTML</option>
+            <option value="txt">TXT</option>
+            <option value="markdown">Markdown</option>
+            <option value="docx">DOCX</option>
+            <option value="print">Print / Save as PDF</option>
+          </select>
+        </label>
+
+        <div class="compile-actions">
+          <button id="runCompileBtn" class="primary-action">Export</button>
+          <button id="cancelCompileBtn">Cancel</button>
+        </div>
+      </section>
+      
+      <section class="compile-section">
+  <div class="compile-label">Book Theme</div>
+
+  <label class="field-label">
+    Theme
+    <select id="bookThemeSelect">
+      <option value="classic">Classic Novel</option>
+      <option value="modern">Modern YA</option>
+      <option value="draft">Draft Review</option>
+      <option value="academic">Academic / Research</option>
+      <option value="large-print">Large Print</option>
+    </select>
+  </label> 
+
+  <div class="sidebar-hint">
+    Themes adjust export/print styling. They can also power EPUB styling later.
+  </div>
+</section>
+
+<section class="compile-section">
+  <div class="compile-label">Compile Profile</div>
+
+  <label class="field-label">
+    Profile
+    <select id="compileProfileSelect">
+      <option value="">Custom / Unsaved</option>
+    </select>
+  </label>
+
+  <div class="compile-button-grid">
+    <button id="applyCompileProfileBtn">Apply Profile</button>
+    <button id="saveCompileProfileBtn">Save Current as Profile</button>
+    <button id="deleteCompileProfileBtn">Delete Profile</button>
+  </div>
+
+  <div class="sidebar-hint">
+    Profiles remember what gets included, export format, print layout, and theme.
+  </div>
+</section>
+      
+      <section class="compile-section">
+  <div class="compile-label">Print Layout</div>
+
+  <div class="compile-grid-two">
+    <label class="field-label">
+      Page size
+      <select id="printPageSizeSelect">
+        <option value="letter">US Letter</option>
+        <option value="a4">A4</option>
+      </select>
+    </label>
+
+    <label class="field-label">
+      Style
+      <select id="printStyleSelect">
+        <option value="book">Book-like</option>
+        <option value="manuscript">Manuscript</option>
+        <option value="compact">Compact</option>
+      </select>
+    </label>
+
+    <label class="field-label">
+      Font
+      <select id="printFontSelect">
+        <option value="garamond">Garamond / book serif</option>
+        <option value="georgia">Georgia</option>
+        <option value="times">Times New Roman</option>
+      </select>
+    </label>
+
+    <label class="field-label">
+      Margins
+      <select id="printMarginsSelect">
+        <option value="standard">Standard</option>
+        <option value="wide">Wide</option>
+        <option value="compact">Compact</option>
+      </select>
+    </label>
+  </div>
+
+  <label class="compile-option">
+    <input id="printAutoTitlePage" type="checkbox" checked />
+    <span>Auto title page if missing</span>
+  </label>
+</section>
+
+      <section class="compile-section">
+        <div class="compile-label">Project Files</div>
+      
+
+        <div class="compile-button-grid">
+          <button id="openProjectFileBtn">Open Project File</button>
+          <button id="saveProjectAsBtn">Save Project As</button>
+          <button id="saveProjectFileBtn">Save Project File</button>
+        </div>
+      
+
+        <label class="field-label">
+          Auto project save
+          <select id="projectAutosaveSelect">
+            <option value="0">Off</option>
+            <option value="2">Every 2 minutes</option>
+            <option value="5">Every 5 minutes</option>
+            <option value="10">Every 10 minutes</option>
+          </select>
+        </label>
+      </section>
+      
+      <section class="compile-section">
+  <div class="compile-label">Project Metadata</div>
+
+  <label class="field-label">
+    Book title
+    <input id="projectTitleInput" type="text" placeholder="Book title..." />
+  </label>
+
+  <label class="field-label">
+    Subtitle
+    <input id="projectSubtitleInput" type="text" placeholder="Optional subtitle..." />
+  </label>
+
+  <label class="field-label">
+    Author
+    <input id="projectAuthorInput" type="text" placeholder="Author name..." />
+  </label>
+
+  <button id="saveProjectMetaBtn">Save Metadata</button>
+</section>
+      
+      <section class="compile-section">
+  <div class="compile-label">Import</div>
+
+  <div class="compile-button-grid">
+    <button id="importBtn">Import Document</button>
+    <button id="importProjectBackupBtn">Import Project / Backup</button>
+  </div>
+</section>
+
+      <section class="compile-section">
+        <div class="compile-label">Safety</div>
+
+        <div class="compile-button-grid">
+          <button id="takeSnapshotBtn">Take Snapshot</button>
+          <button id="snapshotHistoryBtn">Snapshots</button>
+          <button id="exportProjectBackupBtn">Export Backup File</button>
+        </div>
+
+        <div class="sidebar-hint">
+          Project files are best for active work. Backup files are best for portable safety copies.
+        </div>
+      </section>
+
+      <section class="compile-section">
+        <div class="compile-label">Tools</div>
+
+        <div class="compile-button-grid">
+          <button id="insertEndnoteBtn">Insert Endnote</button>
+          <button id="splitDocBtn">Split by Headings</button>
+        </div>
+      </section>
+
+      <section class="compile-section">
+        <div class="compile-label">Preview</div>
+
+        <div id="compilePreviewList" class="compile-preview-list">
+          <div class="empty-note">Choose a scope to preview export order.</div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+    
+    <input
+  id="projectBackupInput"
+  type="file"
+  hidden
+  accept=".naviwriter-backup,.nwproj,.nwp,.json"
+/>
+    
+    <input id="importFile" type="file" hidden accept=".json,.navidoc,.txt,.html,.docx">
+
+    <input
+  id="imageInput"
+  type="file"
+  accept="image/*"
+  hidden
+/>
+    
+    <input
+  id="coverImageInput"
+  type="file"
+  accept="image/*"
+  hidden
+/>
+
+
+<input
+  id="pdfInput"
+  type="file"
+  accept="application/pdf,.pdf"
+  hidden
+/>
+    
+<div id="boardConnectionModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal text-input-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>Connect Board Items</strong>
+        <div class="modal-subtitle">
+          Label the relationship between these board items.
+        </div>
+      </div>
+
+      <button id="closeBoardConnectionModalBtn">×</button>
+    </div>
+
+    <div class="text-input-modal-body">
+      <label class="field-label">
+        Relationship label
+        <input id="boardConnectionLabelInput" type="text" placeholder="related" />
+      </label>
+
+      <label class="field-label">
+        Connector type
+        <select id="boardConnectionTypeSelect">
+          <option value="straight">Straight</option>
+          <option value="curve">Curve</option>
+          <option value="elbow">Elbow</option>
+        </select>
+      </label>
+
+      <div class="modal-actions">
+        <button id="cancelBoardConnectionModalBtn">Cancel</button>
+        <button id="submitBoardConnectionModalBtn" class="primary-action">
+          Connect
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+<div id="boardLinkModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal text-input-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>New Board Link</strong>
+        <div class="modal-subtitle">
+          Add an external link to the board.
+        </div>
+      </div>
+
+      <button id="closeBoardLinkModalBtn">×</button>
+    </div>
+
+    <div class="text-input-modal-body">
+      <label class="field-label">
+        Link title
+        <input id="boardLinkTitleInput" type="text" placeholder="New Link" />
+      </label>
+
+      <label class="field-label">
+        URL
+        <input id="boardLinkUrlInput" type="url" placeholder="https://" />
+      </label>
+
+      <div class="modal-actions">
+        <button id="cancelBoardLinkModalBtn">Cancel</button>
+        <button id="submitBoardLinkModalBtn" class="primary-action">
+          Add Link
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+<div id="choiceModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal choice-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong id="choiceModalTitle">Choose Option</strong>
+        <div id="choiceModalSubtitle" class="modal-subtitle">
+          Select an option.
+        </div>
+      </div>
+
+      <button id="closeChoiceModalBtn">×</button>
+    </div>
+
+    <div id="choiceModalGrid" class="choice-modal-grid">
+      <div class="empty-note">No options available.</div>
+    </div>
+  </div>
+</div>
+    
+    <div id="boardPersonModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal text-input-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong>New Person Card</strong>
+        <div class="modal-subtitle">
+          Add a person, character, or relationship note to the board.
+        </div>
+      </div>
+
+      <button id="closeBoardPersonModalBtn">×</button>
+    </div>
+
+    <div class="text-input-modal-body">
+      <label class="field-label">
+        Name
+        <input id="boardPersonNameInput" type="text" placeholder="New Person" />
+      </label>
+
+      <label class="field-label">
+  Role / label
+  <textarea
+    id="boardPersonRoleInput"
+    rows="2"
+    placeholder="Character"
+  ></textarea>
+</label>
+
+<label class="field-label">
+  Notes
+  <textarea
+    id="boardPersonNotesInput"
+    rows="4"
+    placeholder="Short notes..."
+  ></textarea>
+</label>
+
+      <div class="modal-actions">
+        <button id="cancelBoardPersonModalBtn">Cancel</button>
+        <button id="submitBoardPersonModalBtn" class="primary-action">
+          Add Person
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <div id="messageModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal message-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong id="messageModalTitle">Message</strong>
+        <div id="messageModalText" class="modal-subtitle">
+          Something happened.
+        </div>
+      </div>
+
+      <button id="closeMessageModalBtn">×</button>
+    </div>
+
+    <div class="message-modal-body">
+      <button id="okMessageModalBtn" class="primary-action">OK</button>
+    </div>
+  </div>
+</div>
+    
+    <div id="textInputModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal text-input-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong id="textInputModalTitle">Input</strong>
+        <div id="textInputModalMessage" class="modal-subtitle">
+          Enter a value.
+        </div>
+      </div>
+
+      <button id="closeTextInputModalBtn">×</button>
+    </div>
+
+    <div class="text-input-modal-body">
+      <label class="field-label">
+        <span id="textInputModalLabel">Value</span>
+        <input id="textInputModalField" type="text" />
+      </label>
+
+      <div class="modal-actions">
+        <button id="cancelTextInputModalBtn">Cancel</button>
+        <button id="submitTextInputModalBtn" class="primary-action">
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <div id="confirmModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal confirm-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong id="confirmModalTitle">Confirm</strong>
+        <div id="confirmModalMessage" class="modal-subtitle">
+          Are you sure?
+        </div>
+      </div>
+
+      <button id="closeConfirmModalBtn">×</button>
+    </div>
+
+    <div class="confirm-modal-body">
+      <div class="modal-actions">
+        <button id="cancelConfirmModalBtn">Cancel</button>
+        <button id="submitConfirmModalBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pdfSubdocModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal">
+    <div class="subdoc-modal-head">
+      <strong>PDF Subdocument</strong>
+      <button id="closePdfSubdocModalBtn">×</button>
+    </div>
+
+    <div class="subdoc-type-grid">
+      <button class="subdoc-type-card" id="pdfUploadNewBtn">
+        <span class="subdoc-type-icon">📤</span>
+        <span class="subdoc-type-main">Upload New PDF</span>
+        <span class="subdoc-type-desc">
+          Import a PDF and attach it under the current document.
+        </span>
+      </button>
+
+      <button class="subdoc-type-card" id="pdfBlankNoteBtn">
+        <span class="subdoc-type-icon">📄</span>
+        <span class="subdoc-type-main">Blank PDF Note</span>
+        <span class="subdoc-type-desc">
+          Create a PDF-style subdoc without importing a file yet.
+        </span>
+      </button>
+    </div>
+
+    <div class="subdoc-existing-list-wrap">
+      <div class="section-title">Existing imported PDFs</div>
+      <div id="existingPdfList" class="existing-pdf-list">
+        <div class="empty-note">No imported PDFs yet.</div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+    <div id="matterPresetModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal matter-preset-modal">
+    <div class="subdoc-modal-head">
+      <div>
+        <strong id="matterPresetTitle">Choose Preset</strong>
+        <div id="matterPresetSubtitle" class="matter-preset-subtitle">
+          Select a document preset.
+        </div>
+      </div>
+
+      <button id="closeMatterPresetModalBtn">×</button>
+    </div>
+
+    <div id="matterPresetGrid" class="matter-preset-grid">
+      <div class="empty-note">No presets available.</div>
+    </div>
+  </div>
+</div>
+
+<div id="subdocTypeModal" class="modal-backdrop hidden">
+  <div class="subdoc-modal">
+    <div class="subdoc-modal-head">
+      <strong>Choose Subdocument Type</strong>
+      <button id="closeSubdocModalBtn">×</button>
+    </div>
+
+    <div class="subdoc-type-grid">
+      <button class="subdoc-type-card" data-subdoc-type="chapter">
+        <span class="subdoc-type-icon">📖</span>
+        <span class="subdoc-type-main">Chapter</span>
+        <span class="subdoc-type-desc">A manuscript section with writing stats and goals.</span>
+      </button>
+      
+      <button class="subdoc-type-card" data-subdoc-type="cover">
+  <span class="subdoc-type-icon">🖼️</span>
+  <span class="subdoc-type-main">Cover</span>
+  <span class="subdoc-type-desc">
+    Add a cover image for the project or manuscript.
+  </span>
+</button>
+      
+      <button class="subdoc-type-card" data-subdoc-type="front-matter">
+  <span class="subdoc-type-icon">📑</span>
+  <span class="subdoc-type-main">Front Matter</span>
+  <span class="subdoc-type-desc">
+    Title page, copyright, dedication, epigraph, or preface.
+  </span>
+</button>
+      
+      <button class="subdoc-type-card" data-subdoc-type="body-matter">
+  <span class="subdoc-type-icon">📄</span>
+  <span class="subdoc-type-main">Body Matter</span>
+  <span class="subdoc-type-desc">
+    Prologue, part break, interlude, epilogue, scene, or other main book content.
+  </span>
+</button>
+      
+
+<button class="subdoc-type-card" data-subdoc-type="back-matter">
+  <span class="subdoc-type-icon">📚</span>
+  <span class="subdoc-type-main">Back Matter</span>
+  <span class="subdoc-type-desc">
+    Acknowledgments, about the author, appendix, glossary, or endnotes.
+  </span>
+</button>
+
+      <button class="subdoc-type-card" data-subdoc-type="notes">
+        <span class="subdoc-type-icon">📝</span>
+        <span class="subdoc-type-main">Notes</span>
+        <span class="subdoc-type-desc">Scratchpad, loose thoughts, scene fragments.</span>
+      </button>
+
+      <button class="subdoc-type-card" data-subdoc-type="research">
+        <span class="subdoc-type-icon">📎</span>
+        <span class="subdoc-type-main">Research</span>
+        <span class="subdoc-type-desc">References, lore, imported info, images, tables.</span>
+      </button>
+
+      <button class="subdoc-type-card" data-subdoc-type="pdf">
+        <span class="subdoc-type-icon">📄</span>
+        <span class="subdoc-type-main">Imported PDF</span>
+        <span class="subdoc-type-desc">A document created from imported PDF text.</span>
+      </button>
+
+      <button class="subdoc-type-card" data-subdoc-type="general">
+        <span class="subdoc-type-icon">📋</span>
+        <span class="subdoc-type-main">General</span>
+        <span class="subdoc-type-desc">A flexible subdocument for anything else.</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+  </main>
+
+<!-- Scripts: order matters -->
+<script type="module" src="js/pdf-adapter.js"></script>
+<script type="module" src="js/tiptap-adapter.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/export.js"></script>
+<script src="js/themes.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
