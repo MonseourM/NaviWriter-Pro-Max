@@ -1,116 +1,133 @@
-# NaviWriter — Known Issues
+# NaviWriter Pro v42.0.0: Known Issues and Limitations
 
-A running list of known bugs, quirks, and cleanup items in
-`NaviWriter-Portable-V2.html`. None of these prevent the app from running —
-it parses cleanly and works — but they're good candidates for contributors.
+This file tracks confirmed limitations and practical cautions for the maintained multi-file release, with a legacy note for the discontinued Portable edition. NaviWriter Pro v42.0.0 has no known release-blocking issue at publication, but “no known blocker” is not the same as “software has achieved divine perfection.”
 
-> **Scope:** This is a single-file HTML app (~48,000 lines, ~1 MB). All issues
-> below were found by static review, not runtime testing, so line numbers are
-> approximate and refer to the combined inline scripts.
+## High Priority
 
----
+### Browser storage is not a permanent backup
 
-## 🟠 High priority
+NaviWriter stores active work locally in the browser. Clearing site data, changing browsers, using restrictive privacy settings, losing the device, or browser-storage corruption can affect locally stored projects.
 
-### 1. "Portable" build still depends on the internet
-Despite the `-Portable` name, several **core features load from CDNs** at
-runtime and will not work fully offline (e.g. on a locked-down school/work
-network):
+**Mitigation:** Export project backups regularly and keep copies in more than one location. Create a backup before major imports, deletions, hierarchy changes, source replacements, or application-file updates.
 
-| Feature | Dependency | Source |
-|---|---|---|
-| Rich-text editor | Tiptap 3.27.3 (12+ modules) | `https://esm.sh/@tiptap/*` |
-| `.docx` import | mammoth.js 1.6.0 | `cdnjs.cloudflare.com` |
-| `.zip` handling | JSZip 3.10.1 | `cdnjs.cloudflare.com` |
+### Source replacement can invalidate Reader-derived data
 
-**Symptoms when offline / CDN blocked:**
-- The Tiptap rich editor **silently falls back to plain `contenteditable`**
-  (you lose the richer editing features but the app keeps working).
-- `.docx` and `.zip` import features fail.
+Reader OCR and annotations are associated with retained-source fingerprints. Replacing a retained source invalidates stale OCR. Annotations that cannot be safely reconciled may be marked unresolved instead of being silently attached to the wrong content.
 
-**Suggested fix:** Vendor these libraries inline (or bundle them into the
-single file) so the app is genuinely offline-first and matches the "Portable"
-name.
+**Mitigation:** Review unresolved annotations after replacing a source file. Preserve the former source and a project backup until migrated highlights and notes have been checked.
 
----
+## Medium Priority
 
-## 🟡 Medium priority (dead / conflicting code)
+### Very large projects and retained sources may affect performance
 
-### 2. Duplicate `cleanupChapterText` — conflicting signatures
-Two definitions exist in the same script scope:
-- `function cleanupChapterText(text)` (≈ line 17059)
-- `function cleanupChapterText(text, chapterNumber, tocTitle)` (≈ line 18821)
+Projects with many documents, extensive metadata, large relationship graphs, large boards, unusually long documents, many retained references, or large OCR indexes may render, search, or analyze more slowly. Global search, project-wide analysis, cross-document highlights, graphs, Outliner views, OCR, and long document lists are the most likely areas to show strain.
 
-The **3-argument version loads last and silently overrides** the 1-argument
-one, and it's the only version actually called. The 1-arg version is dead code.
+**Mitigation:** Keep backups, close unnecessary panels, use focused scopes where available, and avoid treating one document as an infinite database wearing a manuscript costume.
 
-**Risk:** A future contributor might call it expecting the simpler 1-arg
-behavior and silently get the 3-arg version instead.
+### OCR is probabilistic
 
-**Suggested fix:** Delete the unused 1-arg definition, or rename one.
+Scanned PDFs and images can be processed with the local Reader OCR system, but recognition quality depends on scan quality, language, resolution, layout, and typography. Low-confidence OCR is identified separately from embedded source text, but it can still contain mistakes.
 
-### 3. Duplicate `safeFileName` — different behavior
-Two definitions across separate script blocks:
-- One truncates filenames to **90 characters** (≈ line 668)
-- One truncates to **80 characters** (≈ line 8822)
+**Mitigation:** Verify OCR-derived quotations, copied text, headings, search matches, and highlights against the visible source page.
 
-The **80-char version loads last and wins** everywhere; the 90-char one is dead.
+### PDF output uses browser print behavior
 
-**Risk:** Conflicting intent — someone "fixing" filename length might edit the
-dead copy and see no effect.
+Print and Save as PDF output can vary by browser, operating system, print settings, selected page size, and margins. Exact pagination is not guaranteed to match a dedicated publishing application.
 
-**Suggested fix:** Keep one, delete the other.
+**Mitigation:** Review the compiled preview and print preview before saving the final PDF.
 
----
+### Split Editor is intentionally lighter than the main Editor
 
-## 🟢 Low priority (harmless cleanup)
+The Split Editor is designed for reference, comparison, renaming, and lighter editing. The Split Editor does not provide every workflow or formatting control available in the main Editor.
 
-### 4. Duplicate `escapeHtml` (functionally identical)
-Two copies in different script blocks. Both escape the same five characters
-(`& < > ' "`), just written differently (regex-replace vs. chained
-`.replace()`). Last one wins; the other is pure redundancy.
+**Mitigation:** Open the split document as the main document for substantial formatting or rewriting.
 
-**Suggested fix:** Consolidate to a single shared helper.
+### Multi-document replacement remains restricted
 
-### 5. A few unguarded internal `JSON.parse` calls
-Most `JSON.parse` calls that touch **user-supplied files** are correctly
-wrapped in `try/catch` by their callers (e.g. project backup import). However,
-a few internal calls that parse the app's **own stored data** assume the data
-is always valid:
-- `JSON.parse(raw)` when reading some settings/state (≈ lines 4364, 11253, 11402)
+Find can search the current document, descendants, root tree, or entire project. Replace All remains restricted to the current document because a project-wide mutation requires stronger transaction and recovery guarantees.
 
-**Risk:** Only an issue if localStorage/IndexedDB data is corrupted by an
-external tool — under normal use this won't fire.
+**Mitigation:** Use a broader Find scope to locate matches, then open and replace within each intended document.
 
-**Suggested fix:** Wrap in `try/catch` and fall back to defaults.
+## Low Priority and Maintenance Debt
 
----
+### The CSS is large and override-heavy
 
-## ✅ Things that are actually solid (not bugs)
-For balance — these were checked and are **fine**:
+`app.css` contains historical style layers and late-stage overrides from iterative UI work, desktop workspace arrangements, responsive redesigns, Reader integration, and compatibility fixes. The current release is styled correctly, but future contributors should expect duplication and specificity battles.
 
-- **No syntax errors** — all 9 script blocks parse cleanly.
-- **Documents persist in IndexedDB**, not localStorage — no storage-quota
-  crashes even with large manuscripts.
-- **No swallowed errors** — zero empty `catch {}` blocks.
-- **No `for (var …)` closure-capture bugs.**
-- **Drag handlers clean up their own listeners** (`pointermove`/`pointerup`
-  are removed on release) — no listener leak.
-- **Render functions clear the DOM before re-binding listeners** — no
-  listener pile-up on re-render.
-- **Backup import is wrapped in `try/catch`** with error logging.
+### The main application script is large
 
----
+`app.js` contains many systems in one file. The application works, but feature maintenance would be easier after modularization and automated regression testing.
 
-## Quick triage summary
+### Browser support is unevenly tested
 
-| # | Issue | Severity | Type | Breaks app? |
-|---|---|---|---|---|
-| 1 | CDN dependencies (not truly offline) | High | Design | Partial (offline only) |
-| 2 | Duplicate `cleanupChapterText` | Medium | Dead code | No |
-| 3 | Duplicate `safeFileName` (80 vs 90) | Medium | Dead code | No |
-| 4 | Duplicate `escapeHtml` | Low | Redundancy | No |
-| 5 | Unguarded internal `JSON.parse` | Low | Robustness | No (edge case) |
+Chromium-based browsers are the primary target. Other modern browsers may work, but layout details, local-file behavior, print output, OCR workers, and browser-storage behavior can differ. Archived Portable builds may have additional compatibility differences and are no longer maintained.
 
-*Overall: for a 48k-line single-file app, this is in very good shape. The only
-substantive item is #1 (offline/CDN). The rest are tidy-up.*
+### Browser spellcheck and third-party writing assistants may be inconsistent
+  
+Native browser spellcheck may not provide underlines or suggestions inside NaviWriter’s rich-text editor. Third-party writing assistants may also work only partially. For example, Grammarly may detect and underline text and may apply a correction, while its suggestion overlay does not appear when an underlined item is hovered over or selected. Behavior may vary by browser, extension version, and operating system.  
+**Status:** Accepted compatibility limitation for v42.0.0. NaviWriter does not guarantee integration with browser extensions or other injected writing-assistant interfaces.  
+**Mitigation:** Use an external proofreading tool or editor when dependable spelling and grammar suggestions are required, then return the reviewed text to NaviWriter. Back up the project before replacing substantial passages.
+
+### Accessibility can be improved
+
+The application includes labels, buttons, keyboard shortcuts, responsive navigation, and Reader controls, but it has not undergone a comprehensive accessibility audit. Keyboard flow, screen-reader announcements, contrast across every custom theme, floating-panel alternatives, and complex graph or board interactions remain candidates for review.
+
+### Discontinued Portable edition
+
+NaviWriter Portable v42.0.0 is discontinued and is no longer maintained, updated, or kept in parity with NaviWriter Pro. Its single-file package embeds application code and large parser, PDF, and OCR assets, so it may start more slowly, use more memory, or encounter browser and worker limitations that are not present in the maintained multi-file build.
+
+**Mitigation:** Use NaviWriter Pro. Treat any remaining Portable download as an archived legacy release only, and migrate important projects through verified backups before relying on the maintained build.
+
+## Accepted Native Browser UI
+
+Some workflows still use browser-provided prompts or platform-native controls. These may include numeric entry for selected table operations, dropdowns, date inputs, color inputs, file selection, and print or Save as PDF interfaces. Their appearance can vary by browser and operating system.
+
+**Status:** Accepted minor UI debt for v42.0.0. Native controls remain because the current workflows function and the remaining visual differences are not release blockers.
+
+**Mitigation:** Use a supported Chromium-based browser. If a native prompt causes a reproducible usability, accessibility, or data-safety problem, report that specific workflow for a focused maintenance fix.
+
+## Modal Action Sizing
+
+Focused confirmation dialogs use larger action buttons than ordinary Inspector controls. The larger sizing emphasizes the small set of available decisions, especially destructive actions such as Delete.
+
+**Status:** Intentional interface hierarchy, not a known defect.
+
+## Feature Limitations
+
+- EPUB export is not included.
+- There is no hosted sync service or server backend.
+- There is no active multi-user collaboration.
+- OCR language coverage depends on the recognition data bundled with the release.
+- Multi-document Replace All is intentionally disabled.
+- Workspace Arrangement and Panel Sizes apply only to Desktop mode. Compact and Mobile use dedicated responsive shells.
+- Some prompts and form controls retain browser-native presentation and may vary by device or browser.
+- Remaining native-dialog and control styling is accepted minor UI debt for v42.0.0.
+
+## Portable Edition Status
+
+NaviWriter Portable v42.0.0 is discontinued. It is no longer supported, maintained, updated, or kept in parity with NaviWriter Pro. If the Portable file remains available, it is provided only as an archived legacy release and may lack current fixes, features, compatibility updates, and documentation changes.
+
+NaviWriter Pro is the maintained source of truth. Future fixes and development should target the verified multi-file source rather than the discontinued Portable build.
+
+## Resolved During the v42.0.0 Cycle
+
+The following areas received substantial repair or completion before release:
+
+- Retained-source Reader architecture
+- Reader and PDF toolbar overlap and alignment
+- Draggable, resizable, collapsible, and multi-panel Reader windows
+- Mobile Reader bottom-sheet restore behavior
+- Persistent highlights, notes, unresolved states, and highlight search
+- Local OCR for scanned PDFs and images
+- OCR confidence, coordinates, fingerprinting, caching, and invalidation
+- Markdown Source and Rendered modes
+- Code line numbers and Copy with Source
+- Find / Replace Match Case and Exact Word options
+- Unified current, descendants, root-tree, and project writing scopes
+- Correct branch and root-tree Find navigation
+- Portable parity packaging
+- Final JavaScript, stylesheet, HTML-reference, and archive-integrity checks
+
+## Reporting a New Issue
+
+When reporting a bug, include the browser, operating system, selected interface layout, workspace arrangement if using Desktop, exact steps, expected behavior, actual behavior, whether the issue occurs in NaviWriter Pro or in an archived Portable build, and whether the problem persists after a hard refresh. Export a project backup before testing destructive reproduction steps.

@@ -1,7 +1,5 @@
 # NaviWriter
 
-**A free, offline-first browser writing app and Scrivener alternative for novels, worldbuilding, and long-form manuscripts.**
-
 **NaviWriter** is an offline-first writing workspace for drafting, organizing, outlining, reviewing, and exporting long-form writing projects.
 
 It was built as a browser-based writing tool inspired by apps like Scrivener and Reedsy, but designed to run locally on the web. It is especially useful for novels, serialized fiction, research-heavy projects, worldbuilding, and large writing projects with many connected documents.
@@ -35,7 +33,7 @@ It is not intended to be a polished commercial product. It is a working local wr
 
 ## Project Status
 
-NaviWriter is currently considered **complete enough for release**.
+NaviWriter Pro v42.0.0 is currently considered **complete enough for release**.
 
 That does **not** mean it is perfect.
 
@@ -87,27 +85,20 @@ In other words: it lives. It works. And it most certainly has scars.
 
 ## Download / Installation
 
-You can use NaviWriter in either of two ways:
-
-### Option 1: Single-file version
+### Supported version: ZIP release
 
 Download:
 
-`NaviWriter Portable V2.html`
-
-
-Then open it in a modern browser.
-
-### Option 2: ZIP version
-
-Download:
-
-`NaviWriter V28 (FINAL V2).zip`
+`NaviWriter v42.0.0.zip`
 
 
 Extract the ZIP, then open:
 
 index.html
+
+### NaviWriter Portable has been discontinued
+
+NaviWriter Portable is discontinued and is no longer maintained, updated, or kept in parity with NaviWriter Pro. The former single-file build may remain available only as an archived legacy release and may lack current fixes, features, compatibility updates, and documentation changes. New users should download the ZIP release above, and existing Portable users should migrate to NaviWriter Pro for the maintained version.
 
 
 in a browser.
@@ -197,6 +188,11 @@ Browser storage is convenient. It is not a life plan--and I say that from experi
 - Themes
 - Focus mode
 - Desktop / compact / mobile layouts
+- Retained-source Reader for PDFs, images, EPUB, Markdown, code, and supported Office-style files
+- Reader search, outline, highlights, notes, Copy with Source, and multiple floating panels
+- Local OCR-backed search and selection for scanned PDFs and images
+- Tree-aware writing scopes for current document, descendants, root tree, and entire project
+- Find / Replace Match Case and Exact Word controls
 
 ### Using NaviWriter
 
@@ -594,8 +590,8 @@ Use the View or Layout menu to choose:
 
 - Auto — automatically switches layout based on screen size
 - Desktop — full three-column layout
-- Compact — drawer-based layout for smaller laptop or tablet widths
-- Mobile — phone-friendly layout with drawers and compact controls
+- Compact — tablet-oriented layout with page-based navigation and landscape split behavior
+- Mobile — phone-friendly single-page layout with fixed bottom navigation
 
 In Compact and Mobile modes:
 
@@ -701,11 +697,13 @@ Known limitations include:
 - Very large projects may affect performance.
 - Browser storage should not be treated as a permanent backup.
 - EPUB export is not currently included.
-- PDF export may need improvement.
+- OCR quality depends on scan quality and recognition confidence.
+- PDF export uses browser print behavior and may need final preview adjustments.
 - The split editor is intentionally basic.
 - The stylesheet is very large.
 - The codebase may be difficult to maintain without refactoring.
-- Some features may depend on browser support or online CDN availability.
+- Some features depend on browser support, local-file restrictions, worker behavior, or available memory.
+- NaviWriter Portable is discontinued. Any archived Portable build may lack current fixes, features, compatibility updates, and documentation changes.
 
 ---
 
@@ -797,7 +795,9 @@ Thanks! 🤭
 ---
 
 
-## Most Recent Builds
+## Most Recent Build
 
-- `NaviWriter Portable V2.html` — single-file build
-- `NaviWriter V28 (FINAL V2).zip` — multi-file build
+- `NaviWriter v42.0.0.zip` — maintained multi-file source-of-truth build
+
+NaviWriter Portable v42.0.0 is an archived legacy release. It is discontinued and should not be treated as a current parity build.
+
