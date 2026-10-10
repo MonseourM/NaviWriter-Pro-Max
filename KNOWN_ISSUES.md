@@ -10,6 +10,14 @@ NaviWriter stores active work locally in the browser. Clearing site data, changi
 
 **Mitigation:** Export project backups regularly and keep copies in more than one location. Create a backup before major imports, deletions, hierarchy changes, source replacements, or application-file updates.
 
+### UI Bugs and Glitches
+
+UI remains very much unfinished. If development resumes, this will be fixed 
+
+**Affects:** Former browser modals, background transparencies, viewing of photos and documents from whiteboard document chips.
+
+**Mitigation:** None, as of now.
+
 ### Source replacement can invalidate Reader-derived data
 
 Reader OCR and annotations are associated with retained-source fingerprints. Replacing a retained source invalidates stale OCR. Annotations that cannot be safely reconciled may be marked unresolved instead of being silently attached to the wrong content.
@@ -80,7 +88,7 @@ NaviWriter Portable v42.0.0 is discontinued and is no longer maintained, updated
 
 ## Accepted Native Browser UI
 
-Some workflows still use browser-provided prompts or platform-native controls. These may include numeric entry for selected table operations, dropdowns, date inputs, color inputs, file selection, and print or Save as PDF interfaces. Their appearance can vary by browser and operating system.
+Some workflows still use browser-provided prompts or platform-native controls. These may include numeric entry for select dropdowns, date inputs, color inputs, file selection, and print or Save as PDF interfaces. Their appearance can vary by browser and operating system.
 
 **Status:** Accepted minor UI debt for v42.0.0. Native controls remain because the current workflows function and the remaining visual differences are not release blockers.
 
@@ -94,11 +102,9 @@ Focused confirmation dialogs use larger action buttons than ordinary Inspector c
 
 ## Feature Limitations
 
-- EPUB export is not included.
 - There is no hosted sync service or server backend.
 - There is no active multi-user collaboration.
 - OCR language coverage depends on the recognition data bundled with the release.
-- Multi-document Replace All is intentionally disabled.
 - Workspace Arrangement and Panel Sizes apply only to Desktop mode. Compact and Mobile use dedicated responsive shells.
 - Some prompts and form controls retain browser-native presentation and may vary by device or browser.
 - Remaining native-dialog and control styling is accepted minor UI debt for v42.0.0.
@@ -130,4 +136,4 @@ The following areas received substantial repair or completion before release:
 
 ## Reporting a New Issue
 
-When reporting a bug, include the browser, operating system, selected interface layout, workspace arrangement if using Desktop, exact steps, expected behavior, actual behavior, whether the issue occurs in NaviWriter Pro or in an archived Portable build, and whether the problem persists after a hard refresh. Export a project backup before testing destructive reproduction steps.
+When reporting a bug, please include the browser, operating system, selected interface layout, workspace arrangement if using Desktop, exact steps, expected behavior, actual behavior, whether the issue occurs in NaviWriter Pro or in an archived Portable build, and whether the problem persists after a hard refresh. Export a project backup before testing destructive reproduction steps.
