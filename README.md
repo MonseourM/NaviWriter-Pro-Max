@@ -790,7 +790,7 @@ Thanks! 🤭
 
 ### Relationship Graph
 
-![NaviWriter relationship graph](screenshots/relationship-graph.png)
+![NaviWriter relationship graph](screenshots/relationship-graph.png?v=2)
 
 ---
 
